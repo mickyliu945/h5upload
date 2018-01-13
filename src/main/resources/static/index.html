@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)http://www.sucaihuo.com/jquery/15/1569/demo/ -->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>图片上传</title>
+    <link href="./css/upload.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<div class="upload-box">
+    <div class="image-box clear">
+        <section class="upload-section">
+            <div class="upload-btn"></div>
+            <input type="file" name="file" id="upload-input" value="" accept="image/jpg,image/jpeg,image/png,image/bmp" multiple="multiple" />
+        </section>
+    </div>
+</div>
+
+<script src="./js/jquery.1.12.4.min.js"></script>
+<script src="./js/upload.js"></script>
+<script>
+    initPics(['https://gss0.bdstatic.com/94o3dSag_xI4khGkpoWK1HF6hhy/baike/w%3D268%3Bg%3D0/sign=d9160a953a4e251fe2f7e3fe9fbdae2a/08f790529822720e94d14a5571cb0a46f21fab06.jpg','http://qq.yh31.com/tp/zjbq/201712200812126278.jpg']);
+    $("#upload-input").ajaxImageUpload({
+        url: '/upload', //上传的服务器地址
+        data: { name:'文件上传' },
+        maxNum: 5, //允许上传图片数量
+        zoom: true, //允许上传图片点击放大
+        allowType: ["gif", "jpeg", "jpg", "bmp",'png'], //允许上传图片的类型
+        maxSize :5, //允许上传图片的最大尺寸，单位M
+        before: function () { //上传前回调函数
+
+        },
+        success:function(url){ //上传成功回调函数
+            console.log(url);
+        },
+        error:function (e) {
+            alert('上传失败，请稍候重试!');
+            console.log(e);
+        },
+        delete: function(url) {
+            console.log("delete: " + url);
+        }
+    });
+    
+</script>
+
+</body>
+</html>
