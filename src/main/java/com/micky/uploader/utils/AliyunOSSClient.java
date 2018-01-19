@@ -35,6 +35,12 @@ public class AliyunOSSClient {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                 return simpleDateFormat.format(new Date());
             }
+
+            @Override
+            public String generateFolder() {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+                return simpleDateFormat.format(new Date()) + "/";
+            }
         };
     }
 
@@ -134,14 +140,33 @@ public class AliyunOSSClient {
     /**
      * 根据key删除OSS服务器上的文件
      *
-     * @param ossClient  oss连接
-     * @param bucketName 存储空间
-     * @param folder     模拟文件夹名 如"qj_nanjing/"
-     * @param key        Bucket下的文件的路径名+文件名 如："upload/cake.jpg"
+     * @param url  文件访问地址
      */
-    public void deleteFile(OSSClient ossClient, String bucketName, String folder, String key) {
-        ossClient.deleteObject(bucketName, folder + key);
-        logger.info("删除" + bucketName + "下的文件" + folder + key + "成功");
+    public boolean deleteFileByUrl(String url) {
+        boolean result = false;
+        if (url.startsWith(aliyunOSSConfig.getAccessUrl()) && url.length() > aliyunOSSConfig.getAccessUrl().length()) {
+            String key = url.substring(aliyunOSSConfig.getAccessUrl().length() + 1);
+            result = deleteFileByKey(key);
+        }
+        return result;
+    }
+
+    /**
+     * 根据key删除OSS服务器上的文件
+     *
+     * @param key        Bucket下的文件的路径名+文件名 如："upload/cake.jpg"
+     * @return
+     */
+    public boolean deleteFileByKey(String key) {
+        boolean result = false;
+        try {
+            ossClient.deleteObject(aliyunOSSConfig.getBucketName(), key);
+            logger.info("删除" + aliyunOSSConfig.getBucketName() + "下的文件" + key + "成功");
+            result = true;
+        } catch (Exception e) {
+            logger.info("删除" + aliyunOSSConfig.getBucketName() + "下的文件" + key + "失败, " + e.getMessage(), e);
+        }
+        return result;
     }
 
     /**
@@ -203,8 +228,9 @@ public class AliyunOSSClient {
             metadata.setContentDisposition("filename/filesize=" + destFileName + "/" + inputStream.available() + "Byte.");
 
             //上传文件
-            ossClient.putObject(aliyunOSSConfig.getBucketName(), aliyunOSSConfig.getFolder() + destFileName, inputStream, metadata);
-            result = aliyunOSSConfig.getAccessUrl() + "/" + aliyunOSSConfig.getFolder() + destFileName;
+            String folder = aliyunOSSConfig.getFolder() + fileNameGenerator.generateFolder();
+            ossClient.putObject(aliyunOSSConfig.getBucketName(), folder + destFileName, inputStream, metadata);
+            result = aliyunOSSConfig.getAccessUrl() + "/" + folder + destFileName;
         } catch (Exception e) {
             logger.error("上传阿里云OSS服务器异常." + e.getMessage(), e);
         }
@@ -282,6 +308,10 @@ public class AliyunOSSClient {
             }
             return destFileName;
         }
+
+        public String generateFolder() {
+            return "/";
+        }
     }
 
     /**
@@ -291,7 +321,7 @@ public class AliyunOSSClient {
      * @return 文件访问url地址
      * @throws Exception
      */
-    public String uploadPrv(File file, String folderName) throws Exception {
+    public String uploadPrv(File file) throws Exception {
         String destFileName = fileNameGenerator.getDestFileName(file.getName());
         return uploadPrvWithDestName(file, destFileName);
     }
