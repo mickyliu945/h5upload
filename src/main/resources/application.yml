@@ -2,10 +2,10 @@ spring.thymeleaf.cache: false
 file_server:
   ali_oss:
     endPoint: oss-cn-shenzhen.aliyuncs.com
-    accessKeyId: dd
-    accessKeySecret: psbzpaxi
+    accessKeyId: LTAIRbs0HTdfdsafznrtuI
+    accessKeySecret: fdasfasfsa
     bucketName: lalakapic
     folder: image/
-    accessUrl: http://dd.oss-cn-shenzhen.aliyuncs.com
+    accessUrl: http://ddd.oss-cn-shenzhen.aliyuncs.com
 server:
   port: 8081
