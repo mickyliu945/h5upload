@@ -21,7 +21,7 @@ public class UploadController {
 
     @RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
     @ResponseBody
-    public Object uploadImage(@RequestParam("files[]") MultipartFile file, HttpServletRequest request) {
+    public Object uploadImage(@RequestParam("files") MultipartFile file, HttpServletRequest request) {
        UploadResult result = upload(file);
        if (result.getCode() != 200) {
            throw new RuntimeException("图片上传失败");
